@@ -26,7 +26,7 @@ const MenuItemSchema = mongoose.Schema({
     type: String,
     required: false, // An image isn't strictly required
   },
-  isAvailable: {
+  isAvailable: { //in case if my item is actually out of stock
     type: Boolean,
     default: true, // The item is available by default when created
   }

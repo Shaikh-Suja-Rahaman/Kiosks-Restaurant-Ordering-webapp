@@ -3,6 +3,7 @@ import dotenv from 'dotenv'
 import cors from 'cors'
 import mongoose from 'mongoose'
 import AuthRoutes from './routes/authRoutes.js'
+import MenuRoutes from './routes/menuRoutes.js'
 
 dotenv.config()
 
@@ -29,3 +30,5 @@ app.get('/', (req, res)=>{ //test route
 })
 
 app.use('/api/auth', AuthRoutes) //send all the auth related tasks to this route
+
+app.use('/api/menu', MenuRoutes)

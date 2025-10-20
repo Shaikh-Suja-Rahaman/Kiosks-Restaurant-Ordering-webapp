@@ -2,6 +2,7 @@ import express from 'express'
 import dotenv from 'dotenv'
 import cors from 'cors'
 import mongoose from 'mongoose'
+import AuthRoutes from './routes/authRoutes.js'
 
 dotenv.config()
 
@@ -26,3 +27,5 @@ mongoose.connect(process.env.MONGO_URI)
 app.get('/', (req, res)=>{ //test route
   res.status(200).send("API CALL TO TEST STUFF")
 })
+
+app.use('/api/auth', AuthRoutes) //send all the auth related tasks to this route

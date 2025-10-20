@@ -4,6 +4,8 @@ import cors from 'cors'
 import mongoose from 'mongoose'
 import AuthRoutes from './routes/authRoutes.js'
 import MenuRoutes from './routes/menuRoutes.js'
+import orderRoutes from './routes/orderRoutes.js'
+import favoritesRoutes from './routes/favoritesRoutes.js';
 
 dotenv.config()
 
@@ -30,5 +32,8 @@ app.get('/', (req, res)=>{ //test route
 })
 
 app.use('/api/auth', AuthRoutes) //send all the auth related tasks to this route
-
 app.use('/api/menu', MenuRoutes)
+app.use('/api/orders', orderRoutes);
+
+
+app.use('/api/favorites', favoritesRoutes)

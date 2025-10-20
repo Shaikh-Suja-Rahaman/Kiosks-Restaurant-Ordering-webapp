@@ -12,7 +12,7 @@ const MenuItemSchema = mongoose.Schema({
     required : true,
     trime : true
   },
-  prices : {
+  price : {
     type : Number,
     required : true
   },

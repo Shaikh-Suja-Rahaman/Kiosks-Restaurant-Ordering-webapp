@@ -6,6 +6,7 @@ import RegisterPage from './pages/RegisterPage'
 import LoginPage from './pages/LoginPage'
 import MenuPage from './pages/MenuPage'
 import CartPage from './pages/CartPage'
+import OrderHistoryPage from './pages/OrderHistoryPage'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 function App() {
@@ -20,7 +21,8 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/menu" element={<MenuPage />} />
-          <Route path="/cart" element={<CartPage />} /> 
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/myorders" element={<OrderHistoryPage />} />
       </Routes>
 
       </main>

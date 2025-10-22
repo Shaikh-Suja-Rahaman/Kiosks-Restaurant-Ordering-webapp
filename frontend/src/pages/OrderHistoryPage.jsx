@@ -51,7 +51,7 @@ const OrderHistoryPage = () => {
     };
 
     // 9. Security Check!
-    if (!userInfo) { //to even view this page, i would need to be logged in 
+    if (!userInfo) { //to even view this page, i would need to be logged in
       navigate('/login'); // If not logged in, go to login page
     } else {
       fetchMyOrders(); // If logged in, fetch the orders
@@ -66,7 +66,7 @@ const OrderHistoryPage = () => {
       ) : error ? (
         <p style={{ color: 'red' }}>{error}</p>
       ) : orders.length === 0 ? (
-        <p>You have no past orders. <a href="/menu">Go to Menu</a></p>
+        <p>You have no past orders. <a href="/">Go to Home</a></p>
       ) : (
         <table>
           <thead>

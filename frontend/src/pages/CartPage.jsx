@@ -97,7 +97,7 @@ const CartPage = () => {
     <div>
       <h1>Shopping Cart</h1>
       {cartItems.length === 0 ? (
-        <p>Your cart is empty. <a href="/menu">Go to Menu</a></p>
+        <p>Your cart is empty. <a href="/">Go to Home</a></p>
       ) : (
         <div>
           {/* --- Cart Items List --- */}

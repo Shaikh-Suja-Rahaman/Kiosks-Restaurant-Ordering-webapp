@@ -74,8 +74,8 @@ const AdminMenuManager = () => {
 
   const createItemHandler = () => {
     // We'll build this page next
-    // navigate('/admin/menu/create');
-    alert('Create item page not built yet');
+    navigate('/admin/menu/create');
+    // alert('Create item page not built yet');
   };
 
   return (

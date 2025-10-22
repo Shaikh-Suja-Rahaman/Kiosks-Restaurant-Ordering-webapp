@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-// --- Import all our actions ---
+// Import all our actions
 import {
   addToCart,
   removeFromCart,
@@ -20,75 +20,58 @@ const CartPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // 1. Get all the state slices we need
+  // Get all the state slices we need
   const { cartItems } = useSelector((state) => state.cart);
   const { userInfo } = useSelector((state) => state.auth);
   const { loading, error, success, order } = useSelector((state) => state.order);
 
-  // 2. Calculate the total price
-  // .reduce() is a standard way to sum up an array
+  // Calculate the total price
   const totalPrice = cartItems
     .reduce((acc, item) => acc + item.price * item.quantity, 0)
-    .toFixed(2); // .toFixed(2) makes it look like $12.50
+    .toFixed(2);
 
-  // 3. This useEffect handles what happens AFTER an order is placed
+  // This useEffect handles what happens AFTER an order is placed
   useEffect(() => {
     if (success) {
-      // Order was successful!
-      // 'order._id' comes from the orderCreateSuccess payload
-      alert('Order placed successfully!'); // Simple alert
-
-      // We will create this OrderDetailsPage next
-      // navigate(`/order/${order._id}`);
-
-      navigate('/'); // For now, just go to the homepage
-      dispatch(clearCart()); // Clear the cart
-      dispatch(orderReset()); // Reset the order state
+      alert('Order placed successfully!');
+      navigate('/');
+      dispatch(clearCart());
+      dispatch(orderReset());
     }
   }, [success, navigate, dispatch, order]);
 
-  // 4. This handler runs when "Place Order" is clicked
+  // This handler runs when "Place Order" is clicked
   const placeOrderHandler = async () => {
-    // Check if user is logged in
     if (!userInfo) {
-      navigate('/login'); // Redirect to login if not
+      navigate('/login');
       return;
     }
 
-    dispatch(orderCreateRequest()); // Set loading = true
+    dispatch(orderCreateRequest());
 
     try {
-      // 5. This is our first PROTECTED API call
-      // Get the token from the user info
       const { token } = userInfo;
-
-      // Set up the request headers to include the token
       const config = {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`, // <-- This is the magic
+          Authorization: `Bearer ${token}`,
         },
       };
 
-      // 6. This is the payload for the backend
       const orderData = {
         orderItems: cartItems,
         totalPrice: totalPrice,
-        // paymentStatus could be set here if you have a payment system
       };
 
-      // 7. Make the API call
       const { data } = await axios.post(
         'http://localhost:5001/api/orders',
         orderData,
         config
       );
 
-      // 8. On success, dispatch success and clear the cart
-      dispatch(orderCreateSuccess(data)); // 'data' is the new order from backend
+      dispatch(orderCreateSuccess(data));
 
     } catch (err) {
-      // 9. On failure, dispatch the error
       dispatch(orderCreateFail(err.response?.data?.message || err.message));
     }
   };
@@ -97,17 +80,42 @@ const CartPage = () => {
     <div>
       <h1>Shopping Cart</h1>
       {cartItems.length === 0 ? (
-        <p>Your cart is empty. <a href="/">Go to Home</a></p>
+        <p>Your cart is empty. <a href="/menu">Go to Menu</a></p>
       ) : (
         <div>
           {/* --- Cart Items List --- */}
           <div>
             {cartItems.map((item) => (
-              <div key={item._id} style={{ display: 'flex', justifyContent: 'space-between', margin: '10px' }}>
-                <span>{item.name}</span>
+              <div
+                key={item._id}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center', // Helps align items vertically
+                  margin: '10px',
+                  borderBottom: '1Gpx solid #eee',
+                  paddingBottom: '10px'
+                }}
+              >
+                {/* --- ADD THIS SECTION --- */}
+                {item.imageUrl && (
+                  <img
+                    src={item.imageUrl}
+                    alt={item.name}
+                    style={{
+                      width: '50px',
+                      height: '50px',
+                      objectFit: 'cover',
+                      borderRadius: '5px',
+                      marginRight: '10px'
+                    }}
+                  />
+                )}
+                {/* --- END OF NEW SECTION --- */}
 
-                {/* --- Quantity Selector --- */}
-                {/* This re-uses our addToCart logic! */}
+                <span style={{ flex: 1 }}>{item.name}</span>
+
+                {/* Quantity Selector */}
                 <select
                   value={item.quantity}
                   onChange={(e) =>
@@ -115,8 +123,8 @@ const CartPage = () => {
                       addToCart({ ...item, quantity: Number(e.target.value) })
                     )
                   }
+                  style={{ margin: '0 10px' }}
                 >
-                  {/* Creates options 1, 2, 3... up to 10 */}
                   {[...Array(10).keys()].map((x) => (
                     <option key={x + 1} value={x + 1}>
                       {x + 1}
@@ -124,9 +132,9 @@ const CartPage = () => {
                   ))}
                 </select>
 
-                <span>${(item.price * item.quantity).toFixed(2)}</span>
+                <span style={{ margin: '0 10px' }}>${(item.price * item.quantity).toFixed(2)}</span>
 
-                {/* --- Remove Button --- */}
+                {/* Remove Button */}
                 <button onClick={() => dispatch(removeFromCart(item._id))}>
                   Remove
                 </button>
@@ -142,7 +150,6 @@ const CartPage = () => {
             </p>
             <p>Total Price: ${totalPrice}</p>
 
-            {/* Show error/loading messages */}
             {error && <p style={{ color: 'red' }}>{error}</p>}
             {loading && <p>Placing order...</p>}
 

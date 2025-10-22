@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 
-// 1. Import all the actions we need from menuAdminSlice
+// Import all the actions we need
 import {
   menuUpdateRequest,
   menuUpdateSuccess,
@@ -19,17 +19,17 @@ const AdminMenuEditPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // 2. Form state
+  // Form state
   const [name, setName] = useState('');
   const [price, setPrice] = useState(0);
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [isAvailable, setIsAvailable] = useState(true);
+  const [uploading, setUploading] = useState(false);
 
-  // 3. Get state from the correct slices
+  // Get state from slices
   const { userInfo } = useSelector((state) => state.auth);
-  // All our state now comes from 'menuAdmin'
   const {
     item,
     loadingItem,
@@ -39,20 +39,19 @@ const AdminMenuEditPage = () => {
     success: successUpdate,
   } = useSelector((state) => state.menuAdmin);
 
-  // 4. This useEffect fetches the item's details AND handles update success
+  // useEffect to fetch item details and handle update success
   useEffect(() => {
-    // If update was successful, reset and go back
     if (successUpdate) {
       dispatch(menuAdminReset());
       navigate('/admin/menumanager');
     } else {
-      // If we don't have the item yet (or ID is wrong), fetch it
       if (!item || item._id !== menuItemId) {
         const fetchItem = async () => {
           try {
             dispatch(menuItemRequest());
-            // Use the public GET /api/menu/:id route we built
-            const { data } = await axios.get(`http://localhost:5001/api/menu/${menuItemId}`);
+            const { data } = await axios.get(
+              `http://localhost:5001/api/menu/${menuItemId}`
+            );
             dispatch(menuItemSuccess(data));
           } catch (err) {
             dispatch(menuItemFail(err.response?.data?.message || err.message));
@@ -60,18 +59,51 @@ const AdminMenuEditPage = () => {
         };
         fetchItem();
       } else {
-        // We have the item, so pre-fill the form!
         setName(item.name);
         setPrice(item.price);
         setDescription(item.description);
         setCategory(item.category);
-        setImageUrl(item.imageUrl);
+        setImageUrl(item.imageUrl || '');
         setIsAvailable(item.isAvailable);
       }
     }
   }, [dispatch, navigate, menuItemId, item, successUpdate]);
 
-  // 5. Submit handler for the UPDATE
+  // This function handles the file upload to Cloudinary
+  const uploadFileHandler = async (e) => {
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append(
+      'upload_preset',
+      // --- THIS IS THE FIX ---
+      import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
+    );
+
+    setUploading(true);
+    try {
+      const config = {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      };
+
+      const { data } = await axios.post(
+        // --- AND THIS IS THE FIX ---
+        `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
+        formData,
+        config
+      );
+
+      setImageUrl(data.secure_url);
+      setUploading(false);
+    } catch (error) {
+      console.error('Image upload failed:', error);
+      setUploading(false);
+    }
+  };
+
+  // This handler submits the UPDATE to our backend
   const submitHandler = async (e) => {
     e.preventDefault();
     dispatch(menuUpdateRequest());
@@ -86,11 +118,13 @@ const AdminMenuEditPage = () => {
       };
 
       const payload = { name, price, description, category, imageUrl, isAvailable };
-      await axios.put(`http://localhost:5001/api/menu/${menuItemId}`, payload, config);
+      await axios.put(
+        `http://localhost:5001/api/menu/${menuItemId}`,
+        payload,
+        config
+      );
 
       dispatch(menuUpdateSuccess());
-      // The useEffect will catch successUpdate=true and navigate
-
     } catch (err) {
       dispatch(menuUpdateFail(err.response?.data?.message || err.message));
     }
@@ -112,32 +146,80 @@ const AdminMenuEditPage = () => {
         <p style={{ color: 'red' }}>{errorItem}</p>
       ) : (
         <form onSubmit={submitHandler}>
-          {/* All form inputs are the same as before */}
           <div>
             <label>Name</label>
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
           </div>
           <div>
             <label>Price</label>
-            <input type="number" step="0.01" value={price} onChange={(e) => setPrice(e.target.value)} required />
+            <input
+              type="number"
+              step="0.01"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              required
+            />
           </div>
           <div>
             <label>Description</label>
-            <textarea value={description} onChange={(e) => setDescription(e.target.value)} required />
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              required
+            />
           </div>
           <div>
             <label>Category</label>
-            <input type="text" value={category} onChange={(e) => setCategory(e.target.value)} required />
+            <input
+              type="text"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              required
+            />
           </div>
           <div>
             <label>Image URL</label>
-            <input type="text" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
+            <input
+              type="text"
+              value={imageUrl}
+              onChange={(e) => setImageUrl(e.target.value)}
+              placeholder="Or paste a URL here"
+            />
           </div>
           <div>
-            <label>Is Available?</label>
-            <input type="checkbox" checked={isAvailable} onChange={(e) => setIsAvailable(e.target.checked)} />
+            <label>Or Upload File</label>
+            <input
+              type="file"
+              onChange={uploadFileHandler}
+            />
+            {uploading && <p>Uploading image...</p>}
           </div>
-          <button type="submit">Update Item</button>
+          {imageUrl && (
+            <div>
+              <p>Image Preview:</p>
+              <img
+                src={imageUrl}
+                alt="Preview"
+                style={{ width: '100px', height: '100px', objectFit: 'cover' }}
+              />
+            </div>
+          )}
+          <div>
+            <label>Is Available?</label>
+            <input
+              type="checkbox"
+              checked={isAvailable}
+              onChange={(e) => setIsAvailable(e.target.checked)}
+            />
+          </div>
+          <button type="submit" disabled={loadingUpdate || uploading}>
+            Update Item
+          </button>
         </form>
       )}
     </div>
@@ -145,3 +227,4 @@ const AdminMenuEditPage = () => {
 };
 
 export default AdminMenuEditPage;
+

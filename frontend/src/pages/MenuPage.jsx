@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 
-
+// Import actions from ALL THREE slices
 import { menuRequest, menuSuccess, menuFail } from '../redux/slices/menuSlice';
 import { addToCart } from '../redux/slices/cartSlice';
 import {
@@ -23,7 +23,6 @@ const MenuPage = () => {
   // Get state from ALL THREE slices
   const { items, loading, error } = useSelector((state) => state.menu);
   const { userInfo } = useSelector((state) => state.auth);
-  // We alias loading/error to avoid conflicts
   const {
     favorites,
     loading: loadingFav,
@@ -32,7 +31,7 @@ const MenuPage = () => {
     loadingRemove,
   } = useSelector((state) => state.favorites);
 
-  // This useEffect (for fetching the menu) is stilll needed
+  // useEffect: Fetch menu
   useEffect(() => {
     const fetchMenuItems = async () => {
       try {
@@ -46,7 +45,7 @@ const MenuPage = () => {
     fetchMenuItems();
   }, [dispatch]);
 
-  //  NEW useEffect: Fetch favorites *if* the user is logged in
+  // useEffect: Fetch favorites
   useEffect(() => {
     if (userInfo) {
       const fetchFavorites = async () => {
@@ -62,7 +61,6 @@ const MenuPage = () => {
             'http://localhost:5001/api/favorites',
             config
           );
-          // 'data' is the populated list of favorite items
           dispatch(favoritesSuccess(data));
         } catch (err) {
           dispatch(favoritesFail(err.response?.data?.message || err.message));
@@ -70,16 +68,16 @@ const MenuPage = () => {
       };
       fetchFavorites();
     }
-  }, [dispatch, userInfo]); // Re-run if user logs in
+  }, [dispatch, userInfo]);
 
-  // 5. Add to Cart handler (no change)
+  // Add to Cart handler
   const addToCartHandler = (item) => {
     const qty = 1;
     dispatch(addToCart({ ...item, quantity: qty }));
     console.log(`${item.name} added to cart`);
   };
 
-  // 6. NEW handler: Add a favorite
+  // Add a favorite handler
   const addFavoriteHandler = async (item) => {
     dispatch(favoriteAddRequest());
     try {
@@ -90,20 +88,18 @@ const MenuPage = () => {
           Authorization: `Bearer ${token}`,
         },
       };
-      // We only need to send the ID
       await axios.post(
         'http://localhost:5001/api/favorites',
         { menuItemId: item._id },
         config
       );
-      // We add the full 'item' to our state so the UI updates
       dispatch(favoriteAddSuccess(item));
     } catch (err) {
       dispatch(favoriteAddFail(err.response?.data?.message || err.message));
     }
   };
 
-  // 7. NEW handler: Remove a favorite
+  // Remove a favorite handler
   const removeFavoriteHandler = async (itemId) => {
     dispatch(favoriteRemoveRequest());
     try {
@@ -117,7 +113,6 @@ const MenuPage = () => {
         `http://localhost:5001/api/favorites/${itemId}`,
         config
       );
-      // We just send the 'itemId' to the reducer to filter it out
       dispatch(favoriteRemoveSuccess(itemId));
     } catch (err) {
       dispatch(favoriteRemoveFail(err.response?.data?.message || err.message));
@@ -134,7 +129,6 @@ const MenuPage = () => {
       ) : (
         <div>
           {items.map((item) => {
-            // 8. Check if this item is in our favorites array
             const isFavorited = favorites.some(
               (favItem) => favItem._id === item._id
             );
@@ -148,24 +142,36 @@ const MenuPage = () => {
                   padding: '10px',
                 }}
               >
+                {/* --- ADD THIS SECTION --- */}
+                {item.imageUrl && (
+                  <img
+                    src={item.imageUrl}
+                    alt={item.name}
+                    style={{
+                      width: '100%',
+                      height: '150px',
+                      objectFit: 'cover',
+                      borderRadius: '5px',
+                    }}
+                  />
+                )}
+                {/* --- END OF NEW SECTION --- */}
+
                 <h2>{item.name}</h2>
                 <p>{item.description}</p>
                 <h3>${item.price}</h3>
 
-                {/* 9. The new Favorite button */}
                 <button
                   onClick={() =>
                     isFavorited
                       ? removeFavoriteHandler(item._id)
                       : addFavoriteHandler(item)
                   }
-                  // Disable if not logged in, or if add/remove is loading
                   disabled={!userInfo || loadingAdd || loadingRemove}
                 >
-                  {isFavorited ? '❤️' : '🤍'} {/* Filled vs. Empty Heart */}
+                  {isFavorited ? '❤️' : '🤍'}
                 </button>
 
-                {/* Add to Cart button (no change) */}
                 <button onClick={() => addToCartHandler(item)}>
                   Add to Cart
                 </button>

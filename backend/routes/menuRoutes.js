@@ -1,22 +1,28 @@
-import express from 'express'
-import { admin, protect } from '../middleware/authMiddleware.js';
+import express from 'express';
+
+// 1. Import ALL your controller functions
 import {
   getMenuItems,
   createMenuItem,
   updateMenuItem,
   deleteMenuItem,
+  getMenuItemById,
 } from '../controllers/menuController.js';
+
+import { protect, admin } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.get('/', getMenuItems);
+// Routes for /api/menu
+router.route('/')
+  .get(getMenuItems)
+  .post(protect, admin, createMenuItem);
 
-router.post('/', protect, admin, createMenuItem); //creation is only
-//something that my admin can do
-
-// 2. Add new routes for /api/menu/:id
-// We chain PUT and DELETE to this specific ID route
-router.put('/', protect, admin, updateMenuItem);
-router.delete('/',protect, admin, deleteMenuItem);
+// 2. ADD THIS ENTIRE BLOCK
+// This tells Express what to do for routes like /api/menu/12345
+router.route('/:id')
+  .get(getMenuItemById)
+  .put(protect, admin, updateMenuItem) // Handles "Update"
+  .delete(protect, admin, deleteMenuItem); // Handles "Delete"
 
 export default router;

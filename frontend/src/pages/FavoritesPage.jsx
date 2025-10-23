@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Heart, ShoppingCart, Loader2, Trash2, HeartOff } from 'lucide-react';
-
+const apiUrl = import.meta.env.VITE_API_URL;
 // Import all the actions we need
 import {
   favoritesRequest,
@@ -115,7 +115,7 @@ const FavoritesPage = () => {
               },
             };
             const { data } = await axios.get(
-              'http://localhost:5001/api/favorites',
+              `${apiUrl}/api/favorites`,
               config
             );
             dispatch(favoritesSuccess(data));

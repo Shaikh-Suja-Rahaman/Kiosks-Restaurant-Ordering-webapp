@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'; // <-- 1. Import useState
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { Heart, ShoppingCart, Loader2 } from 'lucide-react';
-
+const apiUrl = import.meta.env.VITE_API_URL;
 // Import actions (all of this is unchanged)
 import { menuRequest, menuSuccess, menuFail } from '../redux/slices/menuSlice';
 import { addToCart } from '../redux/slices/cartSlice';
@@ -118,7 +118,7 @@ const MenuPage = () => {
     const fetchMenuItems = async () => {
       try {
         dispatch(menuRequest());
-        const res = await axios.get('http://localhost:5001/api/menu');
+        const res = await axios.get(`${apiUrl}/api/menu`);
         dispatch(menuSuccess(res.data));
       } catch (err) {
         dispatch(menuFail(err.response?.data?.message || err.message));
@@ -140,7 +140,7 @@ const MenuPage = () => {
             },
           };
           const { data } = await axios.get(
-            'http://localhost:5001/api/favorites',
+            `${apiUrl}/api/favorites`,
             config
           );
           dispatch(favoritesSuccess(data));
@@ -170,7 +170,7 @@ const MenuPage = () => {
         },
       };
       await axios.post(
-        'http://localhost:5001/api/favorites',
+        `${apiUrl}/api/favorites`,
         { menuItemId: item._id },
         config
       );

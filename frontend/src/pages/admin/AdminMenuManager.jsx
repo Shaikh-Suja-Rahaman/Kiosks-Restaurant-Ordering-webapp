@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { UtensilsCrossed, Plus, Edit, Trash2, Loader2, AlertCircle, ArrowLeft } from 'lucide-react';
-
+const apiUrl = import.meta.env.VITE_API_URL;
 import { menuRequest, menuSuccess, menuFail } from '../../redux/slices/menuSlice';
 import {
   menuDeleteRequest,
@@ -27,7 +27,7 @@ const AdminMenuManager = () => {
   const fetchMenuItems = async () => {
     try {
       dispatch(menuRequest());
-      const { data } = await axios.get('http://localhost:5001/api/menu');
+      const { data } = await axios.get(`${apiUrl}/api/menu`);
       dispatch(menuSuccess(data));
     } catch (err) {
       dispatch(menuFail(err.response?.data?.message || err.message));

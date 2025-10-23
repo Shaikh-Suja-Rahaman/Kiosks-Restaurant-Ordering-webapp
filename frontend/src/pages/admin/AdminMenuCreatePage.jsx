@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { MenuSquare, Loader2, AlertCircle, Upload, ArrowLeft } from 'lucide-react';
-
+const apiUrl = import.meta.env.VITE_API_URL;
 // Import the "Create" and "Reset" actions
 import {
   menuCreateRequest,
@@ -91,7 +91,7 @@ const AdminMenuCreatePage = () => {
       const payload = { name, price, description, category, imageUrl };
 
       // Make a POST request to our backend
-      await axios.post('http://localhost:5001/api/menu', payload, config);
+      await axios.post(`${apiUrl}/api/menu`, payload, config);
 
       dispatch(menuCreateSuccess());
       // The useEffect will catch success=true and navigate

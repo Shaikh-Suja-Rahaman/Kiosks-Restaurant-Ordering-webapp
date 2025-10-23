@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { ShoppingCart, Trash2, Plus, Minus, Loader2, ShoppingBag, Package } from 'lucide-react';
-
+const apiUrl = import.meta.env.VITE_API_URL;
 // Import all our actions
 import {
   addToCart,
@@ -239,7 +239,7 @@ const CartPage = () => {
       };
 
       const { data } = await axios.post(
-        'http://localhost:5001/api/orders',
+        `${apiUrl}/api/orders`,
         orderData,
         config
       );

@@ -7,7 +7,7 @@ import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCredentials, setLoading, setError } from '../redux/slices/authSlice';
 import { Mail, Lock, Loader2, UserPlus, User, LogIn } from 'lucide-react';
-
+const apiUrl = import.meta.env.VITE_API_URL;
 const RegisterPage = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -28,7 +28,7 @@ const RegisterPage = () => {
     dispatch(setLoading());
     try {
       const res = await axios.post(
-        'http://localhost:5001/api/auth/register',
+        `${apiUrl}/api/auth/register`,
         { username, email, password }
       );
       console.log({ res });

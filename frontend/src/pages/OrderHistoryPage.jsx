@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Package, Calendar, DollarSign, Loader2, ShoppingBag } from 'lucide-react';
-
+const apiUrl = import.meta.env.VITE_API_URL;
 // Import the actions for this page
 import {
   myOrdersRequest,
@@ -147,7 +147,7 @@ const OrderHistoryPage = () => {
 
         // Make the PROTECTED API call
         const { data } = await axios.get(
-          'http://localhost:5001/api/orders/myorders',
+          `${apiUrl}/api/orders/myorders`,
           config
         );
 

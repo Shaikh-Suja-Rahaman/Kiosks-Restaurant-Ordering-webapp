@@ -1,6 +1,7 @@
 // ============================================
 // ADMIN ORDER MANAGER
 // ============================================
+const apiUrl = import.meta.env.VITE_API_URL;
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
@@ -36,7 +37,7 @@ const AdminOrderManager = () => {
           },
         };
         const { data } = await axios.get(
-          'http://localhost:5001/api/orders',
+          `${apiUrl}/api/orders`,
           config
         );
         dispatch(orderListSuccess(data));

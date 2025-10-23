@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { MenuSquare, Loader2, AlertCircle, Upload, ArrowLeft } from 'lucide-react';
-
+const apiUrl = import.meta.env.VITE_API_URL;
 // Import all the actions we need
 import {
   menuUpdateRequest,
@@ -61,7 +61,8 @@ const AdminMenuEditPage = () => {
           try {
             dispatch(menuItemRequest());
             const { data } = await axios.get(
-              `http://localhost:5001/api/menu/${menuItemId}`
+              `${apiUrl}/api/menu/${menuItemId}`
+
             );
             dispatch(menuItemSuccess(data));
           } catch (err) {
@@ -130,7 +131,7 @@ const AdminMenuEditPage = () => {
 
       const payload = { name, price, description, category, imageUrl, isAvailable };
       await axios.put(
-        `http://localhost:5001/api/menu/${menuItemId}`,
+        `${apiUrl}/api/menu/${menuItemId}`,
         payload,
         config
       );

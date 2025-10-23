@@ -139,7 +139,7 @@ const FavoritesPage = () => {
         },
       };
       await axios.delete(
-        `http://localhost:5001/api/favorites/${itemId}`,
+        `${apiUrl}/api/favorites/${itemId}`,
         config
       );
       dispatch(favoriteRemoveSuccess(itemId));

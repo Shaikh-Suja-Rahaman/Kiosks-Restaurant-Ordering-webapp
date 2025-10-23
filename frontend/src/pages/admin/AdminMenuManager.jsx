@@ -55,7 +55,7 @@ const AdminMenuManager = () => {
             Authorization: `Bearer ${token}`,
           },
         };
-        await axios.delete(`http://localhost:5001/api/menu/${id}`, config);
+        await axios.delete(`${apiUrl}/api/menu/${id}`, config);
         dispatch(menuDeleteSuccess());
       } catch (err) {
         dispatch(menuDeleteFail(err.response?.data?.message || err.message));

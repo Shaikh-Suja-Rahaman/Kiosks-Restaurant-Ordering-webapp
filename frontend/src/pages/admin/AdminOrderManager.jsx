@@ -66,7 +66,7 @@ const AdminOrderManager = () => {
           },
         };
         const { data } = await axios.put(
-          `http://localhost:5001/api/orders/${orderId}/status`,
+          `${apiUrl}/api/orders/${orderId}/status`,
           { status: newStatus },
           config
         );

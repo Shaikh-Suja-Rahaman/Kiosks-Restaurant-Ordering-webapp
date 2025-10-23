@@ -1,1 +1,5 @@
 @import "tailwindcss";
+
+ body {
+   background-color: #fffeec; /* This will be our "cream" background */
+}

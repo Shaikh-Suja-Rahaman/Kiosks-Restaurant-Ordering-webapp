@@ -14,25 +14,19 @@ export const cartSlice = createSlice({
   initialState,
   reducers: {
     //  The "Saver"
-    addToCart(state, action) {
-      const itemToAdd = action.payload;
-
-      const existingItem = state.cartItems.find(
-        (item) => item._id === itemToAdd._id
-      );
+    addToCart: (state, action) => {
+      const newItem = action.payload;
+      const existingItem = state.cartItems.find(x => x._id === newItem._id);
 
       if (existingItem) {
-        state.cartItems = state.cartItems.map((item) =>
-          item._id === existingItem._id
-            ? { ...item, quantity: item.quantity + itemToAdd.quantity }
-            : item
+        // Update quantity of existing item
+        state.cartItems = state.cartItems.map(item =>
+          item._id === newItem._id ? { ...item, quantity: newItem.quantity } : item
         );
       } else {
-        state.cartItems = [...state.cartItems, itemToAdd];
+        // Add new item with quantity
+        state.cartItems.push({ ...newItem, quantity: 1 });
       }
-
-      // Save to localStorage
-      localStorage.setItem('cartItems', JSON.stringify(state.cartItems));
     },
 
     // Another "Saver"

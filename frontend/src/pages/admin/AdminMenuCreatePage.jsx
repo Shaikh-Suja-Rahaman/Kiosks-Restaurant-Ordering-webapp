@@ -101,6 +101,16 @@ const AdminMenuCreatePage = () => {
     }
   };
 
+  const categories = [
+    'Burgers',
+    'Meals',
+    'Pizzas',
+    'Biryanis',
+    'Sandwich',
+    'Hot Beverages',
+    'Cold Beverages',
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#FFF8F0] to-[#F5E6D3]">
       {/* Header */}
@@ -193,13 +203,17 @@ const AdminMenuCreatePage = () => {
               <label className="block text-sm font-semibold text-[#8B4049] mb-2">
                 Category
               </label>
-              <input
-                type="text"
+              <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 required
-                className="w-full px-4 py-2 rounded-lg border-2 border-[#8B4049]/20 focus:border-[#8B4049] focus:ring-2 focus:ring-[#8B4049]/20 outline-none transition-colors"
-              />
+                className="w-full px-4 py-2 rounded-lg border-2 border-[#8B4049]/20 focus:border-[#8B4049] focus:ring-2 focus:ring-[#8B4049]/20 outline-none transition-colors bg-white"
+              >
+                <option value="" disabled>Select a category</option>
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
             </div>
 
             <div>

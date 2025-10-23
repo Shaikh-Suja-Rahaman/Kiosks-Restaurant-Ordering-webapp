@@ -40,10 +40,7 @@ export default function BottomNavbar({ activeTab, setActiveTab }) {
                 {item.label}
               </span>
               {/* Active tab indicator dot */}
-              <span className={`
-                absolute bottom-1 w-1 h-1 bg-red-800 rounded-full transition-all duration-300
-                ${isActive ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}
-              `}></span>
+              
             </button>
           );
         })}

@@ -8,6 +8,7 @@ import myOrdersReducer from './slices/myOrdersSlice.js';
 import menuAdminReducer from './slices/menuAdminSlice.js';
 import adminOrderReducer from './slices/adminOrderSlice.js';
 import favoritesReducer from './slices/favoritesSlice.js'
+import navigationReducer from './slices/navigationSlice.js'
 
 export const store = configureStore({
   reducer: {
@@ -18,7 +19,8 @@ export const store = configureStore({
     myOrders: myOrdersReducer,
     menuAdmin: menuAdminReducer,
     adminOrders: adminOrderReducer,
-    favorites : favoritesReducer
+    favorites : favoritesReducer,
+    navigation : navigationReducer
   },
   devTools: true,
 });

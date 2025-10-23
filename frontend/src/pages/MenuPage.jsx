@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react'; // <-- 1. Import useState
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { Heart, ShoppingCart, Loader2 } from 'lucide-react';
 
-// Import actions from ALL THREE slices
+// Import actions (all of this is unchanged)
 import { menuRequest, menuSuccess, menuFail } from '../redux/slices/menuSlice';
 import { addToCart } from '../redux/slices/cartSlice';
 import {
@@ -18,7 +18,7 @@ import {
   favoriteRemoveFail,
 } from '../redux/slices/favoritesSlice';
 
-// MenuCard Component
+// MenuCard Component (unchanged)
 const MenuCard = ({ item, isFavorited, onAddToCart, onToggleFavorite, isLoading, userInfo }) => {
   return (
     <div className="bg-[#FFF8F0] rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
@@ -29,6 +29,8 @@ const MenuCard = ({ item, isFavorited, onAddToCart, onToggleFavorite, isLoading,
             src={item.imageUrl}
             alt={item.name}
             className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+            // Add a fallback in case the image is broken
+            onError={(e) => { e.target.src = 'https://placehold.co/600x400/EED8C6/8B4513?text=Image+Broken'; }}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#8B4049] to-[#6B3039]">
@@ -54,22 +56,18 @@ const MenuCard = ({ item, isFavorited, onAddToCart, onToggleFavorite, isLoading,
         )}
       </div>
 
-      {/* Content Section */}
+      {/* Content Section (unchanged) */}
       <div className="p-5">
         <h3 className="text-2xl font-serif text-[#8B4049] mb-2 font-bold">
           {item.name}
         </h3>
-
         <p className="text-gray-600 text-sm mb-4 line-clamp-2 min-h-[2.5rem]">
           {item.description}
         </p>
-
-        {/* Price and Add to Cart */}
         <div className="flex items-center justify-between mt-4">
           <span className="text-3xl font-bold text-[#8B4049]">
             ${item.price.toFixed(2)}
           </span>
-
           <button
             onClick={() => onAddToCart(item)}
             className="bg-[#8B4049] text-[#FFF8F0] px-5 py-2.5 rounded-full font-semibold hover:bg-[#6B3039] transition-colors flex items-center gap-2 shadow-md hover:shadow-lg"
@@ -83,11 +81,27 @@ const MenuCard = ({ item, isFavorited, onAddToCart, onToggleFavorite, isLoading,
   );
 };
 
+// --- 2. ADD A CATEGORY LIST ---
+// (I corrected "sandwhich" to "sandwich")
+const categories = [
+  'All',
+  'Burgers',
+  'Meals',
+  'Pizzas',
+  'Biryanis',
+  'Sandwich',
+  'Hot Beverages',
+  'Cold Beverages',
+];
+
 // Main MenuPage Component
 const MenuPage = () => {
   const dispatch = useDispatch();
 
-  // Get state from ALL THREE slices
+  // --- 3. ADD STATE FOR THE SELECTED CATEGORY ---
+  const [selectedCategory, setSelectedCategory] = useState('All');
+
+  // Get state from slices (unchanged)
   const { items, loading, error } = useSelector((state) => state.menu);
   const { userInfo } = useSelector((state) => state.auth);
   const {
@@ -98,7 +112,8 @@ const MenuPage = () => {
     loadingRemove,
   } = useSelector((state) => state.favorites);
 
-  // useEffect: Fetch menu
+  // All useEffects and handlers are unchanged
+  // ... (useEffect: Fetch menu) ...
   useEffect(() => {
     const fetchMenuItems = async () => {
       try {
@@ -112,7 +127,7 @@ const MenuPage = () => {
     fetchMenuItems();
   }, [dispatch]);
 
-  // useEffect: Fetch favorites
+  // ... (useEffect: Fetch favorites) ...
   useEffect(() => {
     if (userInfo) {
       const fetchFavorites = async () => {
@@ -137,13 +152,13 @@ const MenuPage = () => {
     }
   }, [dispatch, userInfo]);
 
-  // Add to Cart handler
+  // ... (addToCartHandler) ...
   const addToCartHandler = (item) => {
     const qty = 1;
     dispatch(addToCart({ ...item, quantity: qty }));
   };
 
-  // Add a favorite handler
+  // ... (addFavoriteHandler) ...
   const addFavoriteHandler = async (item) => {
     dispatch(favoriteAddRequest());
     try {
@@ -165,7 +180,7 @@ const MenuPage = () => {
     }
   };
 
-  // Remove a favorite handler
+  // ... (removeFavoriteHandler) ...
   const removeFavoriteHandler = async (itemId) => {
     dispatch(favoriteRemoveRequest());
     try {
@@ -185,7 +200,7 @@ const MenuPage = () => {
     }
   };
 
-  // Toggle favorite handler
+  // ... (toggleFavoriteHandler) ...
   const toggleFavoriteHandler = (item) => {
     const isFavorited = favorites.some((favItem) => favItem._id === item._id);
     if (isFavorited) {
@@ -195,9 +210,20 @@ const MenuPage = () => {
     }
   };
 
+  // --- 4. CREATE THE FILTERED LIST ---
+  // This logic runs before rendering
+  const filteredItems =
+    selectedCategory === 'All'
+      ? items
+      : items.filter(
+          (item) =>
+            item.category &&
+            item.category.trim().toLowerCase() === selectedCategory.trim().toLowerCase()
+        );
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#FFF8F0] to-[#F5E6D3]">
-      {/* Header */}
+      {/* Header (unchanged) */}
       <div className="bg-[#8B4049] shadow-lg">
         <div className="max-w-7xl mx-auto px-6 py-12 text-center">
           <h1 className="text-5xl font-serif font-bold text-[#FFF8F0] mb-2">
@@ -211,6 +237,27 @@ const MenuPage = () => {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-12">
+        {/* --- 5. ADD THE CATEGORY FILTER BAR --- */}
+        <div className="mb-8 flex justify-center flex-wrap gap-3">
+          {categories.map((category) => (
+            <button
+              key={category}
+              onClick={() => setSelectedCategory(category)}
+              className={`px-5 py-2.5 rounded-full font-semibold transition-all duration-300 shadow-md
+                ${
+                  selectedCategory === category
+                    ? 'bg-[#8B4049] text-[#FFF8F0] ring-2 ring-offset-2 ring-[#8B4049]'
+                    : 'bg-[#FFF8F0] text-[#8B4049] hover:bg-[#8B4049] hover:text-[#FFF8F0] hover:shadow-lg'
+                }
+              `}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+        {/* --- END OF NEW SECTION --- */}
+
+        {/* 6. UPDATE THE RENDER LOGIC --- */}
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20">
             <Loader2 className="w-12 h-12 text-[#8B4049] animate-spin mb-4" />
@@ -221,25 +268,35 @@ const MenuPage = () => {
             <p className="text-red-600 text-lg font-semibold">{error}</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {items.map((item) => {
-              const isFavorited = favorites.some(
-                (favItem) => favItem._id === item._id
-              );
+          // Check if the *filtered* list is empty
+          filteredItems.length === 0 ? (
+            <div className="text-center py-20">
+              <p className="text-[#8B4049] text-lg">
+                No items found in the "{selectedCategory}" category.
+              </p>
+            </div>
+          ) : (
+            // Map over *filteredItems* instead of *items*
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredItems.map((item) => {
+                const isFavorited = favorites.some(
+                  (favItem) => favItem._id === item._id
+                );
 
-              return (
-                <MenuCard
-                  key={item._id}
-                  item={item}
-                  isFavorited={isFavorited}
-                  onAddToCart={addToCartHandler}
-                  onToggleFavorite={toggleFavoriteHandler}
-                  isLoading={loadingAdd || loadingRemove}
-                  userInfo={userInfo}
-                />
-              );
-            })}
-          </div>
+                return (
+                  <MenuCard
+                    key={item._id}
+                    item={item}
+                    isFavorited={isFavorited}
+                    onAddToCart={addToCartHandler}
+                    onToggleFavorite={toggleFavoriteHandler}
+                    isLoading={loadingAdd || loadingRemove}
+                    userInfo={userInfo}
+                  />
+                );
+              })}
+            </div>
+          )
         )}
       </div>
     </div>

@@ -16,18 +16,22 @@ import {
   orderCreateFail,
   orderReset,
 } from '../redux/slices/orderSlice';
+import { setActiveTab } from '../redux/slices/navigationSlice';
+
 
 // CartItem Component
 const CartItem = ({ item, onUpdateQuantity, onRemove }) => {
   const decreaseQty = () => {
     if (item.quantity > 1) {
-      onUpdateQuantity(item, item.quantity - 1);
+      // Just pass the new quantity directly
+      onUpdateQuantity(item._id, item.quantity - 1);
     }
   };
 
   const increaseQty = () => {
     if (item.quantity < 10) {
-      onUpdateQuantity(item, item.quantity + 1);
+      // Just pass the new quantity directly
+      onUpdateQuantity(item._id, item.quantity + 1);
     }
   };
 
@@ -196,8 +200,14 @@ const CartPage = () => {
   }, [success, navigate, dispatch]);
 
   // Update quantity handler
-  const updateQuantityHandler = (item, newQuantity) => {
-    dispatch(addToCart({ ...item, quantity: newQuantity }));
+  const updateQuantityHandler = (itemId, newQuantity) => {
+    const existingItem = cartItems.find(item => item._id === itemId);
+    if (existingItem) {
+      dispatch(addToCart({
+        ...existingItem,
+        quantity: newQuantity
+      }));
+    }
   };
 
   // Remove item handler
@@ -270,7 +280,7 @@ const CartPage = () => {
               Looks like you haven't added anything to your cart yet. Start exploring our delicious menu!
             </p>
             <button
-              onClick={() => navigate('/menu')}
+              onClick={() => dispatch(setActiveTab('menu'))}
               className="bg-[#8B4049] text-[#FFF8F0] px-8 py-3 rounded-full font-semibold hover:bg-[#6B3039] transition-colors shadow-md hover:shadow-lg"
             >
               Browse Menu

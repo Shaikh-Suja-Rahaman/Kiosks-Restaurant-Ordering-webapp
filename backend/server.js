@@ -10,7 +10,7 @@ import favoritesRoutes from './routes/favoritesRoutes.js';
 dotenv.config()
 
 const app = express()
-const PORT = process.env.PORT
+const PORT = process.env.PORT || 10000; // Change 5001 to 10000
 
 app.use(express.json());
 app.use(cors({
@@ -26,7 +26,7 @@ mongoose.connect(process.env.MONGO_URI)
 .then(()=>{
   console.log("MongoDB connected successfully")
 
-  app.listen(PORT, () => {
+  app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on port ${PORT}`);
   });
 }).catch((err) => console.log("MongoDB connection error", err))

@@ -15,10 +15,12 @@ const PORT = process.env.PORT
 app.use(express.json());
 app.use(cors({
   origin: [
-    'http://localhost:5173', // local dev
-    'https://kiosks-restaurant-ordering-webapp.vercel.app' // deployed frontend
+    'http://localhost:5173',
+    'https://kiosks-restaurant-ordering-webapp.vercel.app'
   ],
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 mongoose.connect(process.env.MONGO_URI)
 .then(()=>{

@@ -1,4 +1,3 @@
-
 // ============================================
 // ADMIN MENU MANAGER
 // ============================================
@@ -7,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { UtensilsCrossed, Plus, Edit, Trash2, Loader2, AlertCircle } from 'lucide-react';
+import { UtensilsCrossed, Plus, Edit, Trash2, Loader2, AlertCircle, ArrowLeft } from 'lucide-react';
 
 import { menuRequest, menuSuccess, menuFail } from '../../redux/slices/menuSlice';
 import {
@@ -73,6 +72,16 @@ const AdminMenuManager = () => {
       {/* Header */}
       <div className="bg-[#8B4049] shadow-lg">
         <div className="max-w-7xl mx-auto px-6 py-12">
+          {/* Add Back Button */}
+          <button
+            onClick={() => navigate('/admin/dashboard')}
+            className="mb-6 flex items-center gap-2 text-[#FFF8F0] hover:text-[#FFF8F0]/80 transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            Back to Dashboard
+          </button>
+
+          {/* Existing header content */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 bg-[#FFF8F0] rounded-full flex items-center justify-center">

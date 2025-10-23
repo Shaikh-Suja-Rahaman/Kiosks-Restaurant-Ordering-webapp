@@ -1,12 +1,11 @@
-
-
 // ============================================
 // ADMIN ORDER MANAGER
 // ============================================
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-import { ShoppingBag, Loader2, AlertCircle, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { ShoppingBag, Loader2, AlertCircle, Clock, CheckCircle, XCircle, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 import {
   orderListRequest,
@@ -20,6 +19,7 @@ import {
 
 const AdminOrderManager = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { orders, loading, error, loadingUpdate, errorUpdate, successUpdate } =
     useSelector((state) => state.adminOrders);
@@ -96,6 +96,16 @@ const AdminOrderManager = () => {
       {/* Header */}
       <div className="bg-[#8B4049] shadow-lg">
         <div className="max-w-7xl mx-auto px-6 py-12">
+          {/* Add Back Button */}
+          <button
+            onClick={() => navigate('/admin/dashboard')}
+            className="mb-6 flex items-center gap-2 text-[#FFF8F0] hover:text-[#FFF8F0]/80 transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            Back to Dashboard
+          </button>
+
+          {/* Existing header content */}
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 bg-[#FFF8F0] rounded-full flex items-center justify-center">
               <ShoppingBag className="w-8 h-8 text-[#8B4049]" />

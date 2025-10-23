@@ -1,111 +1,171 @@
+// ============================================
+// REGISTER PAGE
+// ============================================
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-
-// --- REDUX IMPORTS ---
-// 1. 'useDispatch' is how you "call" or "trigger" a Redux action
-// 2. 'useSelector' is how you "read" data from the Redux state
 import { useDispatch, useSelector } from 'react-redux';
-// 3. We import the specific actions we made in our authSlice
 import { setCredentials, setLoading, setError } from '../redux/slices/authSlice';
-
-// --- END REDUX IMPORTS ---
+import { Mail, Lock, Loader2, UserPlus, User, LogIn } from 'lucide-react';
 
 const RegisterPage = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  // --- REDUX HOOKS ---
-  const dispatch = useDispatch(); // This is our "remote control"
-  const navigate = useNavigate(); // This is for redirecting after login
-
-  // 4. We "select" (read) the auth state from our global store
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { userInfo, loading, error } = useSelector((state) => state.auth);
-  // --- END REDUX HOOKS ---
 
-  // 5. This 'useEffect' will run if 'userInfo' changes
-  // If we log in successfully, userInfo will have data, and we'll redirect
   useEffect(() => {
     if (userInfo) {
-      navigate('/'); // Redirect to homepage
+      navigate('/');
     }
   }, [userInfo, navigate]);
 
-  // 6. Update the submit handler to be 'async'
   const submitHandler = async (e) => {
     e.preventDefault();
-
-    // --- DISPATCH ACTIONS ---
-    dispatch(setLoading()); // Tell Redux "we are now loading"
-
+    dispatch(setLoading());
     try {
-      // 7. Make the API call with axios
       const res = await axios.post(
-        'http://localhost:5001/api/auth/register', // <-- Your backend URL
+        'http://localhost:5001/api/auth/register',
         { username, email, password }
       );
-       console.log({res});
-       
-
-      // 8. ON SUCCESS: Dispatch 'setCredentials' with the user data
-      // 'res.data' is the payload: { _id, username, email, token, ... }
+      console.log({ res });
       dispatch(setCredentials(res.data));
-      navigate('/'); // Redirect to homepage
-
+      navigate('/');
     } catch (err) {
-      // 9. ON FAILURE: Dispatch 'setError' with the error message
-      // This 'err.response.data.message' is the
-      // "User already exists" message from your backend!
       dispatch(setError(err.response?.data?.message || err.message));
     }
-    // --- END DISPATCH ---
   };
 
   return (
-    <div>
-      <h1>Register</h1>
+    <div className="h-screen bg-gradient-to-br from-[#FFF8F0] to-[#F5E6D3] flex items-center justify-center px-6 overflow-hidden">
+      <div className="w-full max-w-md">
+        <div className="bg-[#FFF8F0] rounded-2xl shadow-2xl overflow-hidden border-2 border-[#8B4049]/10">
+          {/* Header */}
+          <div className="bg-gradient-to-r from-[#8B4049] to-[#6B3039] px-6 py-6 text-center">
+            <div className="w-16 h-16 bg-[#FFF8F0] rounded-full mx-auto mb-3 flex items-center justify-center">
+              <UserPlus className="w-8 h-8 text-[#8B4049]" />
+            </div>
+            <h1 className="text-3xl font-serif font-bold text-[#FFF8F0] mb-1">
+              Join Us Today
+            </h1>
+            <p className="text-[#FFF8F0] text-sm opacity-90">
+              Create an account to start ordering
+            </p>
+          </div>
 
-      {/* 10. Show loading or error messages from Redux state */}
-      {loading && <p>Loading...</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+          {/* Form Container */}
+          <div className="px-6 py-6">
+            {error && (
+              <div className="mb-4 bg-red-50 border-2 border-red-200 rounded-lg p-3">
+                <p className="text-red-600 text-xs font-semibold text-center">{error}</p>
+              </div>
+            )}
 
-      <form onSubmit={submitHandler}>
-        {/* ... (Your form inputs are the same) ... */}
-        <div>
-          <label>Username</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
+            <form onSubmit={submitHandler} className="space-y-4">
+              {/* Username Field */}
+              <div>
+                <label className="block text-[#8B4049] font-semibold mb-1.5 text-xs uppercase tracking-wide">
+                  Username
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <User className="w-4 h-4 text-[#8B4049]/50" />
+                  </div>
+                  <input
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    required
+                    className="w-full pl-10 pr-3 py-2.5 border-2 border-[#8B4049]/20 rounded-lg focus:outline-none focus:border-[#8B4049] transition-colors bg-white text-[#8B4049] placeholder-gray-400 text-sm"
+                    placeholder="johndoe"
+                  />
+                </div>
+              </div>
+
+              {/* Email Field */}
+              <div>
+                <label className="block text-[#8B4049] font-semibold mb-1.5 text-xs uppercase tracking-wide">
+                  Email Address
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Mail className="w-4 h-4 text-[#8B4049]/50" />
+                  </div>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className="w-full pl-10 pr-3 py-2.5 border-2 border-[#8B4049]/20 rounded-lg focus:outline-none focus:border-[#8B4049] transition-colors bg-white text-[#8B4049] placeholder-gray-400 text-sm"
+                    placeholder="you@example.com"
+                  />
+                </div>
+              </div>
+
+              {/* Password Field */}
+              <div>
+                <label className="block text-[#8B4049] font-semibold mb-1.5 text-xs uppercase tracking-wide">
+                  Password
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Lock className="w-4 h-4 text-[#8B4049]/50" />
+                  </div>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    className="w-full pl-10 pr-3 py-2.5 border-2 border-[#8B4049]/20 rounded-lg focus:outline-none focus:border-[#8B4049] transition-colors bg-white text-[#8B4049] placeholder-gray-400 text-sm"
+                    placeholder="••••••••"
+                  />
+                </div>
+              </div>
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-[#8B4049] text-[#FFF8F0] py-3 rounded-lg font-bold hover:bg-[#6B3039] transition-colors shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Creating Account...
+                  </>
+                ) : (
+                  <>
+                    <UserPlus className="w-4 h-4" />
+                    Create Account
+                  </>
+                )}
+              </button>
+            </form>
+
+            {/* Divider */}
+            <div className="my-4 flex items-center">
+              <div className="flex-1 border-t border-[#8B4049]/20"></div>
+              <span className="px-3 text-xs text-gray-500">or</span>
+              <div className="flex-1 border-t border-[#8B4049]/20"></div>
+            </div>
+
+            {/* Login Link */}
+            <div className="text-center">
+              <p className="text-gray-600 text-xs mb-2">Already have an account?</p>
+              <button
+                onClick={() => navigate('/login')}
+                className="w-full bg-[#FFF8F0] text-[#8B4049] py-2.5 rounded-lg font-semibold border-2 border-[#8B4049] hover:bg-[#8B4049] hover:text-[#FFF8F0] transition-colors flex items-center justify-center gap-2 text-sm"
+              >
+                <LogIn className="w-4 h-4" />
+                Login to Your Account
+              </button>
+            </div>
+          </div>
         </div>
-
-        <div>
-          <label>Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-
-        <div>
-          <label>Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-
-        <button type="submit" disabled={loading}>
-          Register
-        </button>
-      </form>
+      </div>
     </div>
   );
 };

@@ -67,6 +67,13 @@ const OrderCard = ({ order }) => {
                   day: 'numeric'
                 })}
               </p>
+              <p className='text-gray-500 font-medium'>
+                {new Date(order.createdAt).toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true // set to false for 24-hour format
+                })}
+              </p>
             </div>
           </div>
 
@@ -106,7 +113,7 @@ const OrderCard = ({ order }) => {
         )}
 
         {/* View Details Button */}
-    
+
       </div>
     </div>
   );
@@ -221,7 +228,7 @@ const OrderHistoryPage = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {orders.map((order) => (
                 <OrderCard key={order._id} order={order} />
-              ))}
+              )).reverse()}
             </div>
           </div>
         )}

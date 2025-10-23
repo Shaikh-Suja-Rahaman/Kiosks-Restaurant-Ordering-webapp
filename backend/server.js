@@ -13,8 +13,13 @@ const app = express()
 const PORT = 5001
 
 app.use(express.json());
-app.use(cors());
-
+// app.use(cors());
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    credentials: true,
+  })
+);
 mongoose.connect(process.env.MONGO_URI)
 .then(()=>{
   console.log("MongoDB connected successfully")

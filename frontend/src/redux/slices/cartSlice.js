@@ -27,6 +27,9 @@ export const cartSlice = createSlice({
         // Add new item with quantity
         state.cartItems.push({ ...newItem, quantity: 1 });
       }
+
+      // Save to localStorage
+      localStorage.setItem('cartItems', JSON.stringify(state.cartItems));
     },
 
     // Another "Saver"

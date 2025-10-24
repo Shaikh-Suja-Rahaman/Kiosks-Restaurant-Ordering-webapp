@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'; // <-- 1. Import useState
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
-import { Heart, ShoppingCart, Loader2 } from 'lucide-react';
+import { Heart, ShoppingCart, Loader2, Plus, Minus } from 'lucide-react';
 const apiUrl = import.meta.env.VITE_API_URL;
 // Import actions (all of this is unchanged)
 import { menuRequest, menuSuccess, menuFail } from '../redux/slices/menuSlice';
-import { addToCart } from '../redux/slices/cartSlice';
+import { addToCart, removeFromCart } from '../redux/slices/cartSlice';
 import {
   favoritesRequest,
   favoritesSuccess,
@@ -18,8 +18,18 @@ import {
   favoriteRemoveFail,
 } from '../redux/slices/favoritesSlice';
 
-// MenuCard Component (unchanged)
-const MenuCard = ({ item, isFavorited, onAddToCart, onToggleFavorite, isLoading, userInfo }) => {
+// MenuCard Component
+const MenuCard = ({
+  item,
+  isFavorited,
+  onAddToCart,
+  onIncreaseQty,
+  onDecreaseQty,
+  onToggleFavorite,
+  isLoading,
+  userInfo,
+  cartQuantity = 0
+}) => {
   return (
     <div className="bg-[#FFF8F0] rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
       {/* Image Section */}
@@ -56,7 +66,7 @@ const MenuCard = ({ item, isFavorited, onAddToCart, onToggleFavorite, isLoading,
         )}
       </div>
 
-      {/* Content Section (unchanged) */}
+      {/* Content Section */}
       <div className="p-5">
         <h3 className="text-2xl font-serif text-[#8B4049] mb-2 font-bold">
           {item.name}
@@ -68,13 +78,38 @@ const MenuCard = ({ item, isFavorited, onAddToCart, onToggleFavorite, isLoading,
           <span className="text-3xl font-bold text-[#8B4049]">
             ${item.price.toFixed(2)}
           </span>
-          <button
-            onClick={() => onAddToCart(item)}
-            className="bg-[#8B4049] text-[#FFF8F0] px-5 py-2.5 rounded-full font-semibold hover:bg-[#6B3039] transition-colors flex items-center gap-2 shadow-md hover:shadow-lg"
-          >
-            <ShoppingCart className="w-4 h-4" />
-            Add to Cart
-          </button>
+
+          {/* Conditional rendering: Show quantity controls if in cart, otherwise show Add to Cart button */}
+          {cartQuantity > 0 ? (
+            <div className="flex items-center gap-2 bg-[#8B4049] text-[#FFF8F0] px-3 py-2 rounded-full shadow-md">
+              <button
+                onClick={() => onDecreaseQty(item)}
+                className="w-7 h-7 rounded-full bg-[#FFF8F0]/20 hover:bg-[#FFF8F0]/30 transition-colors flex items-center justify-center"
+              >
+                <Minus className="w-4 h-4" />
+              </button>
+
+              <span className="w-8 text-center font-semibold text-lg">
+                {cartQuantity}
+              </span>
+
+              <button
+                onClick={() => onIncreaseQty(item)}
+                disabled={cartQuantity >= 10}
+                className="w-7 h-7 rounded-full bg-[#FFF8F0]/20 hover:bg-[#FFF8F0]/30 transition-colors flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <Plus className="w-4 h-4" />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => onAddToCart(item)}
+              className="bg-[#8B4049] text-[#FFF8F0] px-5 py-2.5 rounded-full font-semibold hover:bg-[#6B3039] transition-colors flex items-center gap-2 shadow-md hover:shadow-lg"
+            >
+              <ShoppingCart className="w-4 h-4" />
+              Add to Cart
+            </button>
+          )}
         </div>
       </div>
     </div>
@@ -101,9 +136,10 @@ const MenuPage = () => {
   // --- 3. ADD STATE FOR THE SELECTED CATEGORY ---
   const [selectedCategory, setSelectedCategory] = useState('All');
 
-  // Get state from slices (unchanged)
+  // Get state from slices
   const { items, loading, error } = useSelector((state) => state.menu);
   const { userInfo } = useSelector((state) => state.auth);
+  const { cartItems } = useSelector((state) => state.cart);
   const {
     favorites,
     loading: loadingFav,
@@ -156,6 +192,27 @@ const MenuPage = () => {
   const addToCartHandler = (item) => {
     const qty = 1;
     dispatch(addToCart({ ...item, quantity: qty }));
+  };
+
+  // Handler to increase quantity
+  const increaseQtyHandler = (item) => {
+    const cartItem = cartItems.find((x) => x._id === item._id);
+    if (cartItem && cartItem.quantity < 10) {
+      dispatch(addToCart({ ...item, quantity: cartItem.quantity + 1 }));
+    }
+  };
+
+  // Handler to decrease quantity or remove if quantity becomes 0
+  const decreaseQtyHandler = (item) => {
+    const cartItem = cartItems.find((x) => x._id === item._id);
+    if (cartItem) {
+      if (cartItem.quantity > 1) {
+        dispatch(addToCart({ ...item, quantity: cartItem.quantity - 1 }));
+      } else {
+        // Remove from cart if quantity is 1
+        dispatch(removeFromCart(item._id));
+      }
+    }
   };
 
   // ... (addFavoriteHandler) ...
@@ -283,15 +340,22 @@ const MenuPage = () => {
                   (favItem) => favItem._id === item._id
                 );
 
+                // Find the quantity of this item in cart
+                const cartItem = cartItems.find((cartItem) => cartItem._id === item._id);
+                const cartQuantity = cartItem ? cartItem.quantity : 0;
+
                 return (
                   <MenuCard
                     key={item._id}
                     item={item}
                     isFavorited={isFavorited}
                     onAddToCart={addToCartHandler}
+                    onIncreaseQty={increaseQtyHandler}
+                    onDecreaseQty={decreaseQtyHandler}
                     onToggleFavorite={toggleFavoriteHandler}
                     isLoading={loadingAdd || loadingRemove}
                     userInfo={userInfo}
+                    cartQuantity={cartQuantity}
                   />
                 );
               })}

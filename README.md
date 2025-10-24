@@ -126,8 +126,8 @@ PORT=10000
 NODE_ENV=development
 
 # Admin Credentials (Optional - for seeding admin user)
-ADMIN_EMAIL=admin@restaurant.com
-ADMIN_PASSWORD=admin123
+ADMIN_EMAIL=user@gmail.com
+ADMIN_PASSWORD=123
 ```
 
 ### Frontend (.env)
@@ -322,7 +322,7 @@ The application implements a secure authentication system using JWT tokens:
 ### Route Protection
 - **Public Routes:** `/login`, `/register` - Accessible without authentication
 - **Private Routes:** `/` (main app), `/menu`, `/cart`, `/orders`, `/favorites` - Require login
-- **Admin Routes:** `/admin/*` - Require login + admin privileges
+- **Admin Routes:** `/admin/dashboard*` - Require login + admin privileges
 
 ### Components
 - `PrivateRoute` - Protects customer routes, redirects to login if not authenticated
@@ -346,8 +346,8 @@ The application implements a secure authentication system using JWT tokens:
 - Manage user accounts
 
 ### Default Admin Credentials
-- **Email:** admin@restaurant.com
-- **Password:** admin123
+- **Email:** user@gmail.com
+- **Password:** 123
 
 *Note: Change these credentials in production*
 

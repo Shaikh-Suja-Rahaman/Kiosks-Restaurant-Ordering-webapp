@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 // --- Import Your Existing Pages ---
 // Added .jsx extensions to fix resolution errors
@@ -9,6 +9,7 @@ import LoginPage from './pages/LoginPage.jsx';
 
 // --- Import Your Admin Pages ---
 import AdminRoute from './components/AdminRoute.jsx';
+import PrivateRoute from './components/PrivateRoute.jsx';
 import AdminDashboard from './pages/admin/AdminDashboard.jsx';
 import AdminMenuManager from './pages/admin/AdminMenuManager.jsx';
 import AdminOrderManager from './pages/admin/AdminOrderManager.jsx';
@@ -23,13 +24,14 @@ function App() {
     <BrowserRouter>
       <main>
         <Routes>
-          {/* --- Customer Tabbed App --- */}
-          {/* All customer tabs live inside MainLayout now */}
-          <Route path="/" element={<MainLayout />} />
-
-          {/* --- Auth Routes --- */}
+          {/* --- Auth Routes (Public) --- */}
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage />} />
+
+          {/* --- Protected Customer Routes --- */}
+          <Route path="" element={<PrivateRoute />}>
+            <Route path="/" element={<MainLayout />} />
+          </Route>
 
           {/* --- Admin Routes (Untouched) --- */}
           <Route path="" element={<AdminRoute />}>
@@ -40,12 +42,8 @@ function App() {
             <Route path="/admin/menu/create" element={<AdminMenuCreatePage />} />
           </Route>
 
-          {/* NOTE: We've removed /menu, /cart, /myorders, /favorites
-            because they are now handled by MainLayout.
-            If you want to keep them (e.g., for bookmarks), you can
-            add them back and have MainLayout optionally take a "defaultTab" prop.
-            But for your "no navigation" request, this is the cleanest way.
-          */}
+          {/* Catch-all route - redirect to login for any undefined routes */}
+          <Route path="*" element={<Navigate to="/login" replace />} />
 
         </Routes>
       </main>
@@ -54,4 +52,3 @@ function App() {
 }
 
 export default App;
-

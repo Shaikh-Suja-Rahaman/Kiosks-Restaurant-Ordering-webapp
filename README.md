@@ -25,13 +25,15 @@ A modern, full-stack restaurant ordering system built with **React.js**, **Node.
 ## ✨ Features
 
 ### Customer Features
-- **User Authentication** - Secure registration and login system
-- **Browse Menu** - View restaurant menu with detailed item information
-- **Add to Cart** - Shopping cart functionality with quantity management
-- **Favorites System** - Save favorite menu items for quick access
-- **Order Placement** - Easy checkout and order submission
-- **Order History** - Track current and past orders
-- **Responsive Design** - Optimized for desktop, tablet, and mobile devices
+- **🔐 User Authentication** - Secure registration and login system (Required for access)
+- **📋 Browse Menu** - View restaurant menu with detailed item information
+- **🛒 Add to Cart** - Shopping cart functionality with quantity management
+- **❤️ Favorites System** - Save favorite menu items for quick access
+- **📦 Order Placement** - Easy checkout and order submission
+- **📜 Order History** - Track current and past orders
+- **📱 Responsive Design** - Optimized for desktop, tablet, and mobile devices
+
+> **Note:** All features except registration and login require user authentication. The application automatically redirects unauthenticated users to the login page.
 
 ### Admin Features
 - **Admin Dashboard** - Comprehensive overview of restaurant operations
@@ -306,7 +308,28 @@ Restaurant-Ordering-Web-App/
 - `POST /` - Add item to favorites (protected)
 - `DELETE /:menuItemId` - Remove from favorites (protected)
 
-## 👥 User Roles
+## � Authentication & Route Protection
+
+### Authentication Flow
+The application implements a secure authentication system using JWT tokens:
+
+1. **Registration/Login** - Users must register or login to access the application
+2. **Token Storage** - JWT tokens are stored in localStorage with user information
+3. **Protected Routes** - All main application routes are protected and require authentication
+4. **Auto-redirect** - Unauthenticated users are automatically redirected to login
+5. **Persistent Sessions** - Users remain logged in across browser sessions via localStorage
+
+### Route Protection
+- **Public Routes:** `/login`, `/register` - Accessible without authentication
+- **Private Routes:** `/` (main app), `/menu`, `/cart`, `/orders`, `/favorites` - Require login
+- **Admin Routes:** `/admin/*` - Require login + admin privileges
+
+### Components
+- `PrivateRoute` - Protects customer routes, redirects to login if not authenticated
+- `AdminRoute` - Protects admin routes, redirects to login if not authenticated or not admin
+- Authentication state managed via Redux with localStorage persistence
+
+## �👥 User Roles
 
 ### Customer
 - Browse menu items

@@ -38,7 +38,7 @@ function App() {
           {/* --- Public Policy Routes (for Razorpay verification) --- */}
           <Route path="/terms" element={<TermsPage />} />
           <Route path="/privacy" element={<PrivacyPage />} />
-          <Route path="/shipping" element={<ShippingPage />} />
+          {/* <Route path="/shipping" element={<ShippingPage />} /> */}
           <Route path="/refunds" element={<RefundsPage />} />
           <Route path="/contact" element={<ContactPage />} />
 

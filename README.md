@@ -119,32 +119,36 @@ MONGO_URI=mongodb://localhost:27017/restaurant-ordering
 # JWT Secret
 JWT_SECRET=your_super_secret_jwt_key_here
 
-
-
 # Server Configuration
 PORT=10000
 NODE_ENV=development
+
+# Razorpay Configuration
+RAZORPAY_KEY_ID=rzp_test_xxxxxxxxxxxx
+RAZORPAY_SECRET=your_razorpay_secret
 
 # Admin Credentials (Optional - for seeding admin user)
 ADMIN_EMAIL=user@gmail.com
 ADMIN_PASSWORD=123
 ```
 
-### Frontend (.env)
+### Frontend (.env or .env.local)
 
 Create a `.env` file in the `frontend` directory with the following variables:
 
 ```env
+# API Configuration (Optional - defaults to localhost:10000 in development)
+VITE_API_URL=http://localhost:10000
+# For production:
+# VITE_API_URL=https://your-backend-url.com
+
+# Razorpay Configuration (use live key in production)
+VITE_RAZORPAY_KEY_ID=rzp_test_xxxxxxxxxxxx
+
 # Cloudinary Configuration (for image uploads)
 VITE_CLOUDINARY_CLOUD_NAME=dpvx0odty
 VITE_CLOUDINARY_UPLOAD_PRESET=kiosk-app
-
-# API Configuration (Optional - defaults to localhost:10000 in development)
-VITE_API_BASE_URL=http://localhost:10000
-# For production:
-# VITE_API_BASE_URL=https://your-backend-url.com
 ```
-
 **Note:** The frontend uses Vite, so all environment variables must be prefixed with `VITE_` to be accessible in the client-side code.
 
 ### API Configuration
@@ -153,7 +157,7 @@ The frontend is configured to work with the backend API. Update the API base URL
 
 ```javascript
 // In your API configuration file
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ||
+const API_BASE_URL = import.meta.env.VITE_API_URL ||
   (import.meta.env.MODE === 'production'
     ? 'https://your-backend-url.com'
     : 'http://localhost:10000');
@@ -204,83 +208,66 @@ npm start
 ```
 Restaurant-Ordering-Web-App/
 │
-├── 📁 backend/                      # Backend Node.js application
-│   ├── 📁 controllers/              # Request handlers and business logic
-│   │   ├── authController.js        # Authentication logic
-│   │   ├── favoritesController.js   # Favorites management
-│   │   ├── menuController.js        # Menu item operations
-│   │   └── orderController.js       # Order processing
-│   │
-│   ├── 📁 middleware/               # Custom middleware
-│   │   └── authMiddleware.js        # JWT authentication middleware
-│   │
-│   ├── 📁 models/                   # MongoDB schemas
-│   │   ├── MenuItem.js              # Menu item schema
-│   │   ├── Order.js                 # Order schema
-│   │   └── User.js                  # User schema
-│   │
-│   ├── 📁 routes/                   # API route definitions
-│   │   ├── authRoutes.js            # Authentication routes
-│   │   ├── favoritesRoutes.js       # Favorites routes
-│   │   ├── menuRoutes.js            # Menu routes
-│   │   └── orderRoutes.js           # Order routes
-│   │
-│   ├── 📁 public/                   # Static files
-│   ├── package.json                 # Backend dependencies
-│   └── server.js                    # Express server entry point
+├── backend/
+│   ├── controllers/
+│   │   ├── authController.js
+│   │   ├── favoritesController.js
+│   │   ├── menuController.js
+│   │   ├── orderController.js
+│   │   └── paymentController.js        # Razorpay create + verify
+│   ├── middleware/
+│   │   └── authMiddleware.js
+│   ├── models/
+│   │   ├── MenuItem.js
+│   │   ├── Order.js
+│   │   └── User.js
+│   ├── routes/
+│   │   ├── authRoutes.js
+│   │   ├── favoritesRoutes.js
+│   │   ├── menuRoutes.js
+│   │   ├── orderRoutes.js
+│   │   └── paymentRoutes.js            # /api/payments/create-order, /verify
+│   ├── public/
+│   ├── server.js
+│   └── package.json
 │
-├── 📁 frontend/                     # Frontend React application
-│   ├── 📁 public/                   # Static assets
-│   │
-│   ├── 📁 src/                      # Source code
-│   │   ├── 📁 assets/               # Images, icons, etc.
-│   │   │
-│   │   ├── 📁 components/           # Reusable React components
-│   │   │   ├── AdminRoute.jsx       # Protected admin routes
-│   │   │   └── BottomNavbar.jsx     # Mobile navigation
-│   │   │
-│   │   ├── 📁 pages/                # Page components
-│   │   │   ├── CartPage.jsx         # Shopping cart
-│   │   │   ├── FavoritesPage.jsx    # User favorites
-│   │   │   ├── LoginPage.jsx        # User login
-│   │   │   ├── MenuPage.jsx         # Menu display
-│   │   │   ├── OrderHistoryPage.jsx # Order history
-│   │   │   ├── RegisterPage.jsx     # User registration
-│   │   │   │
-│   │   │   └── 📁 admin/            # Admin-only pages
-│   │   │       ├── AdminDashboard.jsx      # Admin overview
-│   │   │       ├── AdminMenuCreatePage.jsx # Create menu items
-│   │   │       ├── AdminMenuEditPage.jsx   # Edit menu items
-│   │   │       ├── AdminMenuManager.jsx    # Menu management
-│   │   │       └── AdminOrderManager.jsx   # Order management
-│   │   │
-│   │   ├── 📁 redux/                # State management
-│   │   │   ├── store.js             # Redux store configuration
-│   │   │   │
-│   │   │   └── 📁 slices/           # Redux Toolkit slices
-│   │   │       ├── adminOrderSlice.js    # Admin order state
-│   │   │       ├── authSlice.js          # Authentication state
-│   │   │       ├── cartSlice.js          # Shopping cart state
-│   │   │       ├── favoritesSlice.js     # Favorites state
-│   │   │       ├── menuAdminSlice.js     # Admin menu state
-│   │   │       ├── menuSlice.js          # Menu state
-│   │   │       ├── myOrdersSlice.js      # User orders state
-│   │   │       ├── navigationSlice.js    # Navigation state
-│   │   │       └── orderSlice.js         # Order processing state
-│   │   │
-│   │   ├── App.jsx                  # Main App component
-│   │   ├── App.css                  # Global styles
-│   │   ├── MainLayout.jsx           # Main layout component
-│   │   ├── index.css                # Tailwind CSS imports
-│   │   └── main.jsx                 # React entry point
-│   │
-│   ├── eslint.config.js             # ESLint configuration
-│   ├── index.html                   # HTML template
-│   ├── package.json                 # Frontend dependencies
-│   ├── vercel.json                  # Vercel deployment config
-│   └── vite.config.js              # Vite configuration
-│
-└── README.md                        # Project documentation
+├── frontend/
+│   ├── public/
+│   ├── src/
+│   │   ├── assets/
+│   │   ├── components/
+│   │   │   ├── AdminRoute.jsx
+│   │   │   ├── BottomNavbar.jsx
+│   │   │   └── PrivateRoute.jsx
+│   │   ├── pages/
+│   │   │   ├── CartPage.jsx
+│   │   │   ├── FavoritesPage.jsx
+│   │   │   ├── LoginPage.jsx
+│   │   │   ├── MenuPage.jsx
+│   │   │   ├── OrderHistoryPage.jsx
+│   │   │   ├── RegisterPage.jsx
+│   │   │   ├── ContactPage.jsx
+│   │   │   ├── TermsPage.jsx
+│   │   │   ├── PrivacyPage.jsx
+│   │   │   ├── ShippingPage.jsx         # Razorpay-required policy page
+│   │   │   ├── RefundsPage.jsx          # Razorpay-required policy page
+│   │   │   └── admin/
+│   │   │       ├── AdminDashboard.jsx
+│   │   │       ├── AdminMenuCreatePage.jsx
+│   │   │       ├── AdminMenuEditPage.jsx
+│   │   │       ├── AdminMenuManager.jsx
+│   │   │       └── AdminOrderManager.jsx
+│   │   ├── redux/
+│   │   │   ├── store.js
+│   │   │   └── slices/ (auth, cart, order, favorites, menu, admin, etc.)
+│   │   ├── App.jsx
+│   │   ├── MainLayout.jsx
+│   │   ├── index.css
+│   │   └── main.jsx
+│   ├── index.html                      # includes Razorpay checkout script
+│   ├── vercel.json
+│   └── package.json
+└── README.md
 ```
 
 ## 🔗 API Endpoints

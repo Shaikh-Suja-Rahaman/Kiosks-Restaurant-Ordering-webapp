@@ -7,6 +7,13 @@ import RegisterPage from './pages/RegisterPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 // We no longer import MenuPage, CartPage etc. here
 
+// Policy / static pages
+import TermsPage from './pages/TermsPage.jsx';
+import PrivacyPage from './pages/PrivacyPage.jsx';
+import ShippingPage from './pages/ShippingPage.jsx';
+import RefundsPage from './pages/RefundsPage.jsx';
+import ContactPage from './pages/ContactPage.jsx';
+
 // --- Import Your Admin Pages ---
 import AdminRoute from './components/AdminRoute.jsx';
 import PrivateRoute from './components/PrivateRoute.jsx';
@@ -27,6 +34,13 @@ function App() {
           {/* --- Auth Routes (Public) --- */}
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage />} />
+
+          {/* --- Public Policy Routes (for Razorpay verification) --- */}
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/shipping" element={<ShippingPage />} />
+          <Route path="/refunds" element={<RefundsPage />} />
+          <Route path="/contact" element={<ContactPage />} />
 
           {/* --- Protected Customer Routes --- */}
           <Route path="" element={<PrivateRoute />}>

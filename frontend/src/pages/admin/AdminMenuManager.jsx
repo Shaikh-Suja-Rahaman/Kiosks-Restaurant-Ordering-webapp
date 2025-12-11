@@ -180,7 +180,7 @@ const AdminMenuManager = () => {
                       </td>
                       <td className="px-6 py-4">
                         <span className="font-bold text-[#8B4049] text-lg">
-                          ${item.price.toFixed(2)}
+                          Rs {item.price.toFixed(2)}
                         </span>
                       </td>
                       <td className="px-6 py-4">

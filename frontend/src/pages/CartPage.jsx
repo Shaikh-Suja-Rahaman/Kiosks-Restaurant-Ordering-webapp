@@ -93,10 +93,10 @@ const CartItem = ({ item, onUpdateQuantity, onRemove }) => {
             {/* Price */}
             <div className="text-right">
               <p className="text-sm text-gray-500">
-                ${item.price.toFixed(2)} each
+                Rs {item.price.toFixed(2)} each
               </p>
               <p className="text-2xl font-bold text-[#8B4049]">
-                ${(item.price * item.quantity).toFixed(2)}
+                Rs {(item.price * item.quantity).toFixed(2)}
               </p>
             </div>
           </div>
@@ -135,12 +135,12 @@ const OrderSummary = ({ cartItems, totalPrice, onPlaceOrder, loading, error }) =
 
         <div className="flex justify-between items-center pb-3 border-b border-[#8B4049]/10">
           <span className="text-gray-600">Subtotal:</span>
-          <span className="font-semibold text-[#8B4049] text-lg">${totalPrice}</span>
+          <span className="font-semibold text-[#8B4049] text-lg">Rs {totalPrice}</span>
         </div>
 
         <div className="flex justify-between items-center pt-2">
           <span className="text-xl font-serif font-bold text-[#8B4049]">Total:</span>
-          <span className="text-3xl font-bold text-[#8B4049]">${totalPrice}</span>
+          <span className="text-3xl font-bold text-[#8B4049]">Rs {totalPrice}</span>
         </div>
       </div>
 

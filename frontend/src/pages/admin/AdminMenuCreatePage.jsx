@@ -174,7 +174,7 @@ const AdminMenuCreatePage = () => {
 
             <div>
               <label className="block text-sm font-semibold text-[#8B4049] mb-2">
-                Price ($)
+                Price (Rs)
               </label>
               <input
                 type="number"

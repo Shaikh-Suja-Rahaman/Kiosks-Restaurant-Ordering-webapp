@@ -56,7 +56,7 @@ const FavoriteCard = ({ item, onRemoveFavorite, onAddToCart, isLoadingRemove }) 
         {/* Price */}
         <div className="mb-4">
           <span className="text-3xl font-bold text-[#8B4049]">
-            ${item.price.toFixed(2)}
+            Rs {item.price.toFixed(2)}
           </span>
         </div>
 

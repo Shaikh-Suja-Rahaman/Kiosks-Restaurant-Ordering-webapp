@@ -76,7 +76,7 @@ const MenuCard = ({
         </p>
         <div className="flex items-center justify-between mt-4">
           <span className="text-3xl font-bold text-[#8B4049]">
-            ${item.price.toFixed(2)}
+            Rs {item.price.toFixed(2)}
           </span>
 
           {/* Conditional rendering: Show quantity controls if in cart, otherwise show Add to Cart button */}
@@ -137,7 +137,9 @@ const MenuPage = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
 
   // Get state from slices
-  const { items, loading, error } = useSelector((state) => state.menu);
+    const { items, loading, error } = useSelector((state) => state.menu);
+    // Ensure items is always an array
+    const safeItems = Array.isArray(items) ? items : [];
   const { userInfo } = useSelector((state) => state.auth);
   const { cartItems } = useSelector((state) => state.cart);
   const {
@@ -271,8 +273,8 @@ const MenuPage = () => {
   // This logic runs before rendering
   const filteredItems =
     selectedCategory === 'All'
-      ? items
-      : items.filter(
+      ? safeItems
+      : safeItems.filter(
           (item) =>
             item.category &&
             item.category.trim().toLowerCase() === selectedCategory.trim().toLowerCase()

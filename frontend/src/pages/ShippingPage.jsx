@@ -6,35 +6,31 @@ export default function ShippingPage() {
       <div className="max-w-4xl mx-auto px-6 py-14 space-y-8">
         <header className="space-y-3 text-center">
           <p className="text-sm uppercase tracking-[0.2em] text-[#8B4049] font-semibold">Policy</p>
-          <h1 className="text-4xl font-serif font-bold text-[#8B4049]">Shipping & Delivery</h1>
+          <h1 className="text-4xl font-serif font-bold text-[#8B4049]">Shipping & Delivery Policy</h1>
           <p className="text-gray-700">Effective Date: 11 Dec 2025</p>
         </header>
 
         <section className="space-y-4 bg-white/80 backdrop-blur rounded-2xl shadow-lg p-8 border border-[#8B4049]/10">
           <p>
-            We deliver orders to the address provided at checkout. Delivery times depend on location, kitchen load, and
-            courier availability.
+            This service is a kiosk / in-restaurant ordering system. We do not provide any shipping or home delivery of
+            products.
           </p>
-          <h2 className="text-xl font-semibold text-[#8B4049]">Delivery Areas</h2>
           <p>
-            We currently serve select areas listed during checkout. Orders outside our coverage may be cancelled with a
-            full refund.
+            All orders placed through this application must be picked up directly at the restaurant counter. No physical
+            goods are shipped to customers.
           </p>
-          <h2 className="text-xl font-semibold text-[#8B4049]">Delays</h2>
           <p>
-            Weather, traffic, or unexpected events may cause delays. We will notify you when possible and work to
-            deliver your order promptly.
+            Since this is not an e-commerce shipping service, traditional shipping timelines, courier delivery, and
+            logistics are not applicable.
           </p>
-          <h2 className="text-xl font-semibold text-[#8B4049]">Wrong Address</h2>
           <p>
-            Please ensure your address and contact number are correct. Incorrect details may lead to failed delivery and
-            potential cancellation.
+            Order fulfillment happens instantly at the restaurant premises once the order is accepted.
+          </p>
+          <p>
+            If you have any questions about order pickup or service delivery, please contact us using the details on our
+            Contact Us page.
           </p>
         </section>
-
-        <footer className="text-sm text-gray-600">
-          For delivery questions, email delivery@kiosks-restaurant.com.
-        </footer>
       </div>
     </div>
   );

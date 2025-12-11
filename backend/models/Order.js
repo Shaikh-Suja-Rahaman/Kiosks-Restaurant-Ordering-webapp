@@ -25,13 +25,14 @@ const OrderSchema = mongoose.Schema(
       ref: "User",
       required: true,
     },
-    OrderItems: [OrderItemSchema], //my Order Items is an array which
+    orderItems: [OrderItemSchema], //my Order Items is an array which
     //contains all the orders list exactly like a schema
 
     totalPrice: {
       type: Number,
       required: true,
     },
+
     status: {
       type: String,
       required: true,

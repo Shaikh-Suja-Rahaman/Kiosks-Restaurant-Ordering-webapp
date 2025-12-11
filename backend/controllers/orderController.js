@@ -1,33 +1,30 @@
 import Order from "../models/Order.js";
 
-export const placeOrder = async (req, res) =>{
 
+export const placeOrder = async (req, res) => {
   try {
-    const { orderItems, totalPrice, paymentStatus } = req.body; //orther fileds have a default value
-     // Check if the orderItems array is empty
-    if (orderItems && orderItems.length === 0) {
-      return res.status(400).json({ message: 'No order items' });
+    const { orderItems, totalPrice, paymentStatus } = req.body;
+    if (!orderItems || orderItems.length === 0) {
+      return res.status(400).json({ message: "No order items" });
     }
 
     const order = new Order({
-      // Get the user ID from the 'protect' middleware
       user: req.user._id,
-      orderItems: orderItems,
-      totalPrice: totalPrice,
-      paymentStatus: paymentStatus || 'pending', // Default to pending if not provided
-      // 'status' (pending, in-progress, etc.) will use the default 'pending'
+      orderItems,
+      totalPrice,
+      paymentStatus: paymentStatus || "pending",
+      status: "pending",
     });
 
     const createdOrder = await order.save();
 
-    // Send the new order back as confirmation
-    res.status(201).json(createdOrder);
-
+    return res.status(201).json({
+      order: createdOrder,
+      razorpayOrder: req.razorpayOrder ?? null,
+    });
   } catch (error) {
-
     console.error(error);
-    res.status(500).json({ message: 'Server error creating order' });
-
+    res.status(500).json({ message: "Server error creating order" });
   }
 }
 

@@ -233,19 +233,61 @@ const CartPage = () => {
         },
       };
 
-      const orderData = {
-        orderItems: cartItems,
-        totalPrice: totalPrice,
-      };
-
+      // 1) Create Razorpay order
       const { data } = await axios.post(
-        `${apiUrl}/api/orders`,
-        orderData,
+        `${apiUrl}/api/payments/create-order`,
+        { totalPrice: Number(totalPrice) },
         config
       );
+      const { razorpayOrder } = data;
 
-      dispatch(orderCreateSuccess(data));
+      // 2) Open Razorpay Checkout
+      const options = {
+        key: 'rzp_test_RqJeFkIbBlROTt',
+        amount: razorpayOrder.amount,
+        currency: razorpayOrder.currency,
+        name: 'Kiosks',
+        description: 'Payment',
+        order_id: razorpayOrder.id,
+        handler: async function (response) {
+          try {
+            // 3) Verify signature + create order in backend
+            const verifyRes = await axios.post(
+              `${apiUrl}/api/payments/verify`,
+              {
+                orderId: response.razorpay_order_id,
+                paymentId: response.razorpay_payment_id,
+                signature: response.razorpay_signature,
+                orderItems: cartItems.map(({ _id, quantity, price }) => ({
+                  menuItem: _id,
+                  quantity,
+                  price,
+                })),
+                totalPrice: Number(totalPrice),
+              },
+              config
+            );
 
+            dispatch(orderCreateSuccess(verifyRes.data));
+            dispatch(clearCart());
+            navigate('/');
+          } catch (err) {
+            alert('Payment verification failed');
+            dispatch(orderCreateFail(err.response?.data?.message || err.message));
+          }
+        },
+        theme: { color: '#3399cc' },
+      };
+
+      const rzp1 = new window.Razorpay(options);
+      rzp1.on('payment.failed', function () {
+        dispatch(orderCreateFail('Payment failed'));
+      });
+      // also handle close/dismiss
+      options.modal = {
+        ondismiss: () => dispatch(orderCreateFail('Payment cancelled')),
+      };
+      rzp1.open();
     } catch (err) {
       dispatch(orderCreateFail(err.response?.data?.message || err.message));
     }

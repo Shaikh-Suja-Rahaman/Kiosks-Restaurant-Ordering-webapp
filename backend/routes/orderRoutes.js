@@ -14,7 +14,7 @@ const router = express.Router();
 // We use 'protect' because *any* logged-in user can place an order
 router.route('/')
   .post(protect, placeOrder)         // Customer: Place an order
-  .get(protect, admin, getAllOrders); // Admin: Get all orders
+.get(protect, admin, getAllOrders); // Admin: Get all orders
 
 // --- Customer-specific routes ---
 // '/myorders' MUST come before '/:id'

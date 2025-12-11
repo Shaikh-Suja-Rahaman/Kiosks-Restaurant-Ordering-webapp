@@ -6,6 +6,7 @@ import AuthRoutes from './routes/authRoutes.js'
 import MenuRoutes from './routes/menuRoutes.js'
 import orderRoutes from './routes/orderRoutes.js'
 import favoritesRoutes from './routes/favoritesRoutes.js';
+import paymentRoutes from "./routes/paymentRoutes.js";
 
 dotenv.config()
 
@@ -43,3 +44,4 @@ app.use('/api/orders', orderRoutes);
 
 
 app.use('/api/favorites', favoritesRoutes)
+app.use("/api/payments", paymentRoutes);

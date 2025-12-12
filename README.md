@@ -270,6 +270,21 @@ Restaurant-Ordering-Web-App/
 └── README.md
 ```
 
+## Payments (Razorpay – Test Mode)
+This app uses Razorpay in **test mode**. To complete a test payment, choose **Wallet → AirtelPaymentsBank** in the Razorpay checkout.
+
+### Flow (simplified)
+1. **Create Razorpay order** – Frontend calls `POST /api/payments/create-order` (auth) with `totalPrice`. Backend returns `{ razorpayOrder }`.
+2. **Open checkout** – Frontend opens Razorpay Checkout with `order_id = razorpayOrder.id`.
+3. **On success** – Razorpay returns `order_id`, `payment_id`, `signature`. Frontend calls `POST /api/payments/verify` (auth) with those plus `orderItems` and `totalPrice`.
+4. **Verify & save** – Backend recomputes HMAC with `RAZORPAY_SECRET`. If the signature matches, it saves the order (`paymentStatus: "paid"`, `status: "pending"`). If invalid, it returns 400 and no order is saved.
+5. **Failure / cancel** – Razorpay `payment.failed` or modal dismiss triggers an error state on the frontend; loading stops and the cart remains unchanged.
+
+### Notes
+- Backend envs: `RAZORPAY_KEY_ID`, `RAZORPAY_SECRET`.
+- Frontend uses `VITE_RAZORPAY_KEY_ID` in checkout options.
+- Orders persist only after successful signature verification.
+
 ## 🔗 API Endpoints
 
 ### Authentication Routes (`/api/auth`)
@@ -337,10 +352,6 @@ The application implements a secure authentication system using JWT tokens:
 - **Password:** 123
 
 *Note: Change these credentials in production*
-
-## 🎨 Screenshots
-
-*Add screenshots of your application here to showcase the UI/UX*
 
 ## 🚀 Deployment
 

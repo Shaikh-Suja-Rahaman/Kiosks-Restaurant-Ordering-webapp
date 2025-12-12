@@ -276,7 +276,8 @@ const CartPage = () => {
             dispatch(orderCreateFail(err.response?.data?.message || err.message));
           }
         },
-        theme: { color: '#3399cc' },
+        theme: { color: '#7A3E43' },
+
       };
 
       const rzp1 = new window.Razorpay(options);
